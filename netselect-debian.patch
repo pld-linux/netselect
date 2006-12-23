@@ -1,0 +1,1310 @@
+--- netselect-0.3.ds1.orig/debian/rules
++++ netselect-0.3.ds1/debian/rules
+@@ -1,66 +1,76 @@
+ #!/usr/bin/make -f
+-# 							-*- makefile -*-
+-# debian.rules file for the Debian/GNU Linux apmd package
+-# Copyright 1996-98 by Dirk Eddelbuettel <edd@debian.org>
+-# And fiddled with by Avery Pennarun for use with netselect
+-
+-package	= netselect
+-debtmp	:= $(shell pwd)/debian/tmp
++# Sample debian/rules that uses debhelper.
++# This file is public domain software, originally written by Joey Hess. 
+ 
++# Uncomment this to turn on verbose mode.
+ #export DH_VERBOSE=1
+ 
+ build: build-stamp
+ build-stamp:
+ 	dh_testdir
+-	$(MAKE)
++
++	# Add here commands to compile the package.
++	$(MAKE) netselect
++
+ 	touch build-stamp
+ 
+ clean:
+ 	dh_testdir
+ 	dh_testroot
+ 	rm -f build-stamp
++
++	# Add here commands to clean up after the build process.
+ 	-$(MAKE) clean
+-	dh_clean
+ 
+-binary-indep: build
++	dh_clean
+ 
+-binary-arch: build
+-#	dh_testversion
++install: build
+ 	dh_testdir
+ 	dh_testroot
+-	dh_installdebconf
+ 	dh_clean -k
+-	dh_installdirs
+-	$(MAKE) PREFIX=`pwd`/debian/tmp/usr \
+-		MANDEST=`pwd`/debian/tmp/usr/share/man install
+-	dh_installdocs	README README.OS2 README.traceroute HISTORY
+-#	dh_installmenu
+-#	dh_installinit	--noscripts
+-#	dh_installcron
+-#	dh_installmanpages
+-	dh_undocumented
+-	#dh_installexamples		debian-ftp-mirrors
+-	dh_installchangelogs		ChangeLog
+-	dh_strip
+-	dh_link
+-	dh_compress
+-	echo x1; ls -l debian/tmp/usr/bin
+-	#dh_suidregister
+-	echo x2; ls -l debian/tmp/usr/bin
+-	dh_fixperms
+-	chmod u+s debian/tmp/usr/bin/netselect
+-	dh_installdeb
+-	dh_shlibdeps
+-	dh_gencontrol
+-#	dh_makeshlibs
+-#	dh_md5sums
+-	echo x3; ls -l debian/tmp/usr/bin
+-	dh_builddeb
+-	echo x4; ls -l debian/tmp/usr/bin
++	dh_installdirs -A
+ 
+-source diff:                                                                  
+-	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
++	# Add here commands to install the package into debian/<packagename>
++	$(MAKE) PREFIX=$(CURDIR)/debian/netselect/usr \
++		MANDEST=$(CURDIR)/debian/netselect/usr/share/man/man1 install
++	
++	mv $(CURDIR)/debian/netselect/usr/bin/netselect-apt \
++	   $(CURDIR)/debian/netselect-apt/usr/bin/
++	
++	rm -r $(CURDIR)/debian/netselect/usr/share/man/man1/netselect-apt.1
++
++# Build architecture-independent files here.
++binary-indep: build install
++	dh_testdir -i
++	dh_testroot -i
++	dh_installchangelogs -i
++	dh_installdocs -i
++	dh_installman -i
++	dh_link -i
++	dh_compress -i
++	dh_fixperms -i
++	dh_installdeb -i
++	dh_gencontrol -i
++	dh_md5sums -i
++	dh_builddeb -i
++
++# Build architecture-dependent files here.
++binary-arch: build install
++	dh_testdir -a
++	dh_testroot -a
++	dh_installchangelogs -a ChangeLog 
++	dh_installdocs -a
++	dh_installdebconf -a
++	dh_installman -a
++	dh_link -a
++	dh_strip -a
++	dh_compress -a
++	dh_fixperms -a
++	dh_installdeb -a
++	dh_shlibdeps -a
++	dh_gencontrol -a
++	dh_md5sums -a
++	dh_builddeb -a
+ 
+ binary: binary-indep binary-arch
+-.PHONY: build clean binary-indep binary-arch binary
+-
++.PHONY: build clean binary-indep binary-arch binary install
+--- netselect-0.3.ds1.orig/debian/copyright
++++ netselect-0.3.ds1/debian/copyright
+@@ -1,8 +1,9 @@
+-
+-This is the Debian GNU/Linux prepackaged version of netselect.  It was
+-written and then Debian-packaged by Avery Pennarun
+-<apenwarr@worldvisions.ca>.  It was derived from Van Jacobson's traceroute,
+-and shares its license, which follows:
++This is the Debian GNU/Linux packaged version of netselect.  It was written and
++then Debian-packaged by Avery Pennarun <apenwarr@nit.ca>.
++The homepage for netselect is at
++http://people.nit.ca/~apenwarr/netselect/index.html
++It was derived from Van Jacobson's traceroute, and shares its license, which
++follows:
+ 
+ [Note: the University of California has released an updated license that
+ removes the so-called "obnoxious advertising clause" and Avery has
+@@ -10,7 +11,7 @@
+ 
+ /*
+  * Netselect:
+- *      Copyright (c) 1998 by Avery Pennarun <apenwarr@worldvisions.ca>
++ *      Copyright (c) 1998 by Avery Pennarun <apenwarr@nit.ca>
+  *
+  * Traceroute:
+  * Copyright (c) 1990, 1993
+--- netselect-0.3.ds1.orig/debian/po/POTFILES.in
++++ netselect-0.3.ds1/debian/po/POTFILES.in
+@@ -0,0 +1 @@
++[type: gettext/rfc822deb] templates
+--- netselect-0.3.ds1.orig/debian/po/fr.po
++++ netselect-0.3.ds1/debian/po/fr.po
+@@ -0,0 +1,56 @@
++#
++#    Translators, if you are not familiar with the PO format, gettext
++#    documentation is worth reading, especially sections dedicated to
++#    this format, e.g. by running:
++#         info -n '(gettext)PO Files'
++#         info -n '(gettext)Header Entry'
++#
++#    Some information specific to po-debconf are available at
++#            /usr/share/doc/po-debconf/README-trans
++#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
++#
++#    Developers do not need to manually edit POT or PO files.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: netselect 0.3.ds1\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2004-02-18 11:21+0100\n"
++"PO-Revision-Date: 2004-03-10 17:53+0100\n"
++"Last-Translator: Clément Stenac <zorglub@via.ecp.fr>\n"
++"Language-Team: French <debian-l10n-french@lists.debian.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=iso-8859-1\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid "Do you want netselect to be installed setuid root?"
++msgstr ""
++"Netselect doit-il s'exécuter avec les privilèges du super-utilisateur ?"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Netselect can be installed with the set-user-id bit set, so that it will run "
++"with the permissions of the 'root' user.  Since netselect needs these "
++"permissions to work properly, ordinary users cannot run it unless it is "
++"installed this way."
++msgstr ""
++"Netselect peut s'exécuter avec les privilèges du super-utilisateur (par "
++"utilisation du bit « setuid »). Étant donné que netselect a besoin de ces "
++"privilèges pour fonctionner correctement, les utilisateurs non privilégiés "
++"ne peuvent pas s'en servir si le bit setuid n'est pas positionné."
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Enabling this feature may be a security risk, so it is disabled by default.  "
++"If in doubt, I suggest you leave it disabled."
++msgstr ""
++"Activer cette fonctionnalité peut constituer un risque de sécurité, c'est "
++"pourquoi elle est désactivée par défaut. En cas de doute, il est conseillé "
++"de la laisser désactivée."
+--- netselect-0.3.ds1.orig/debian/po/templates.pot
++++ netselect-0.3.ds1/debian/po/templates.pot
+@@ -0,0 +1,49 @@
++#
++#    Translators, if you are not familiar with the PO format, gettext
++#    documentation is worth reading, especially sections dedicated to
++#    this format, e.g. by running:
++#         info -n '(gettext)PO Files'
++#         info -n '(gettext)Header Entry'
++#
++#    Some information specific to po-debconf are available at
++#            /usr/share/doc/po-debconf/README-trans
++#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
++#
++#    Developers do not need to manually edit POT or PO files.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2004-02-18 11:21+0100\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=CHARSET\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid "Do you want netselect to be installed setuid root?"
++msgstr ""
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Netselect can be installed with the set-user-id bit set, so that it will run "
++"with the permissions of the 'root' user.  Since netselect needs these "
++"permissions to work properly, ordinary users cannot run it unless it is "
++"installed this way."
++msgstr ""
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Enabling this feature may be a security risk, so it is disabled by default.  "
++"If in doubt, I suggest you leave it disabled."
++msgstr ""
+--- netselect-0.3.ds1.orig/debian/po/ja.po
++++ netselect-0.3.ds1/debian/po/ja.po
+@@ -0,0 +1,55 @@
++#
++#    Translators, if you are not familiar with the PO format, gettext
++#    documentation is worth reading, especially sections dedicated to
++#    this format, e.g. by running:
++#         info -n '(gettext)PO Files'
++#         info -n '(gettext)Header Entry'
++#
++#    Some information specific to po-debconf are available at
++#            /usr/share/doc/po-debconf/README-trans
++#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
++#
++#    Developers do not need to manually edit POT or PO files.
++#
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: netselect 0.3.ds1-1\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2004-02-18 11:21+0100\n"
++"PO-Revision-Date: 2004-09-02 10:02+0900\n"
++"Last-Translator: Hideki Yamane <henrich@samba.gr.jp>\n"
++"Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=EUC-JP\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid "Do you want netselect to be installed setuid root?"
++msgstr "netselect ¤ò root ¤Ë setuid ¤·¤Æ¥¤¥ó¥¹¥È¡¼¥ë¤·¤Þ¤¹¤«?"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Netselect can be installed with the set-user-id bit set, so that it will run "
++"with the permissions of the 'root' user.  Since netselect needs these "
++"permissions to work properly, ordinary users cannot run it unless it is "
++"installed this way."
++msgstr ""
++"netselect ¤Ï set-user-id ¤òÀßÄê¤·¤Æ¥¤¥ó¥¹¥È¡¼¥ë¤Ç¤­¤ë¤Î¤Ç¡¢'root' ¥æ¡¼¥¶¤Î¸¢"
++"¸Â¤ÇÆ°ºî¤Ç¤­¤Þ¤¹¡£netselect ¤ÏÀµ¤·¤¯Æ°ºî¤¹¤ë¤Î¤Ë¤³¤Î¸¢¸Â¤¬É¬Í×¤Ê¤Î¤Ç¡¢¤³¤¦¤·"
++"¤Ê¤¤¸Â¤ê°ìÈÌ¥æ¡¼¥¶¤ÏÆ°ºî¤µ¤»¤é¤ì¤Þ¤»¤ó¡£"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Enabling this feature may be a security risk, so it is disabled by default.  "
++"If in doubt, I suggest you leave it disabled."
++msgstr ""
++"¤³¤Îµ¡Ç½¤òÍ­¸ú¤Ë¤¹¤ë¤Î¤Ï¥»¥­¥å¥ê¥Æ¥£¾å¤Î¥ê¥¹¥¯¤Ë¤Ê¤ë¤«¤â¤·¤ì¤Ê¤¤¤Î¤Ç¡¢ÄÌ¾ï¤Ï"
++"Ìµ¸ú¤Ë¤Ê¤Ã¤Æ¤¤¤Þ¤¹¡£¤è¤¯È½¤é¤Ê¤¤¾ì¹ç¤Ï¡¢Ìµ¸ú¤Î¤Þ¤Þ¤Ë¤·¤Æ¤ª¤¯¤Î¤ò¤ª´«¤á¤·¤Þ"
++"¤¹¡£"
+--- netselect-0.3.ds1.orig/debian/po/de.po
++++ netselect-0.3.ds1/debian/po/de.po
+@@ -0,0 +1,60 @@
++# translation of de.po to German
++# translation of netselect_0.3.ds1-1_templates.po to German
++#
++#    Translators, if you are not familiar with the PO format, gettext
++#    documentation is worth reading, especially sections dedicated to
++#    this format, e.g. by running:
++#         info -n '(gettext)PO Files'
++#         info -n '(gettext)Header Entry'
++#    Some information specific to po-debconf are available at
++#            /usr/share/doc/po-debconf/README-trans
++#         or http://www.debian.org/intl/l10n/po-debconf/README-trans#
++#    Developers do not need to manually edit POT or PO files.
++# Jens Nachtigall <nachtigall@web.de>, 2004.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: de\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2004-02-18 11:21+0100\n"
++"PO-Revision-Date: 2004-10-25 22:10+0200\n"
++"Last-Translator: Jens Nachtigall <nachtigall@web.de>\n"
++"Language-Team: German <debian-l10n-german@lists.debian.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Generator: KBabel 1.3.1\n"
++"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid "Do you want netselect to be installed setuid root?"
++msgstr "MÃ¶chten Sie, dass netselect setuid-root installiert wird?"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Netselect can be installed with the set-user-id bit set, so that it will run "
++"with the permissions of the 'root' user.  Since netselect needs these "
++"permissions to work properly, ordinary users cannot run it unless it is "
++"installed this way."
++msgstr ""
++"Netselect kann so installiert werden, dass das Benutzer-ID-Bit gesetzt ist. "
++"Dadurch wird es mit den Rechten des Benutzers Â»rootÂ« laufen. Da netselect "
++"diese Rechte benÃ¶tigt um richtig zu funktionieren, kÃ¶nnen gewÃ¶hnliche "
++"Benutzer netselect nicht ausfÃ¼hren, falls es nicht "
++"auf diese Art installiert ist."
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Enabling this feature may be a security risk, so it is disabled by default.  "
++"If in doubt, I suggest you leave it disabled."
++msgstr ""
++"Die Aktivierung dieser FÃ¤higkeit kann ein Sicherheitsrisiko darstellen, "
++"weshalb es standardmÃ¤ÃŸig ausgeschaltet ist. Falls Sie sich unsicher sind, "
++"empfehle ich es deaktiviert zu lassen."
++
+--- netselect-0.3.ds1.orig/debian/po/cs.po
++++ netselect-0.3.ds1/debian/po/cs.po
+@@ -0,0 +1,55 @@
++#
++#    Translators, if you are not familiar with the PO format, gettext
++#    documentation is worth reading, especially sections dedicated to
++#    this format, e.g. by running:
++#         info -n '(gettext)PO Files'
++#         info -n '(gettext)Header Entry'
++#
++#    Some information specific to po-debconf are available at
++#            /usr/share/doc/po-debconf/README-trans
++#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
++#
++#    Developers do not need to manually edit POT or PO files.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: netselect\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2004-02-18 11:21+0100\n"
++"PO-Revision-Date: 2004-10-15 14:33+0200\n"
++"Last-Translator: Jan Outrata <outrataj@upcase.inf.upol.cz>\n"
++"Language-Team: Czech <provoz@debian.cz>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-2\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid "Do you want netselect to be installed setuid root?"
++msgstr "Chcete instalovat netselect s nastaveným SUID bitem?"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Netselect can be installed with the set-user-id bit set, so that it will run "
++"with the permissions of the 'root' user.  Since netselect needs these "
++"permissions to work properly, ordinary users cannot run it unless it is "
++"installed this way."
++msgstr ""
++"Netselect mù¾e být nainstalován s nastaveným set-user-id (SUID) bitem, "
++"tak¾e pobì¾í s právy u¾ivatele 'root'. Jeliko¾ netselect potøebuje "
++"tato práva pro správnou funkènost, obyèejní u¾ivatelé jej nehohou, "
++"pokud není takto instalován, spou¹tìt."
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Enabling this feature may be a security risk, so it is disabled by default.  "
++"If in doubt, I suggest you leave it disabled."
++msgstr ""
++"Povolení této mo¾nosti mù¾e být bezpeènostní riziko, proto je "
++"implicitnì zakázána. Pokud si nejste jisti, doporuèuji nechat ji "
++"zakázanou."
+--- netselect-0.3.ds1.orig/debian/po/pt_BR.po
++++ netselect-0.3.ds1/debian/po/pt_BR.po
+@@ -0,0 +1,57 @@
++#
++#    Translators, if you are not familiar with the PO format, gettext
++#    documentation is worth reading, especially sections dedicated to
++#    this format, e.g. by running:
++#         info -n '(gettext)PO Files'
++#         info -n '(gettext)Header Entry'
++#
++#    Some information specific to po-debconf are available at
++#            /usr/share/doc/po-debconf/README-trans
++#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
++#
++#    Developers do not need to manually edit POT or PO files.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: netselect_0.3.ds1-3\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2004-02-18 11:21+0100\n"
++"PO-Revision-Date: 2004-12-01 16:00-0300\n"
++"Last-Translator: Tiago Bortoletto Vaz <tiago@debian-ba.org>\n"
++"Language-Team: Debian-BR Project <debian-l10n-portuguese@lists.debian.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-1\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid "Do you want netselect to be installed setuid root?"
++msgstr "Você quer que o netselect seja instalado com setuid root?"
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Netselect can be installed with the set-user-id bit set, so that it will run "
++"with the permissions of the 'root' user.  Since netselect needs these "
++"permissions to work properly, ordinary users cannot run it unless it is "
++"installed this way."
++msgstr ""
++"Netselect pode ser instalado com o bit set-user-id setado, dessa forma "
++"ele irá rodar com as permissões do usuário root. Ao menos que o netselect "
++"necessite dessas permissões para funcionar corretamente, usuários normais "
++"não poderão executá-lo a não ser que seja instalado dessa maneira."
++
++#. Type: boolean
++#. Description
++#: ../templates:4
++msgid ""
++"Enabling this feature may be a security risk, so it is disabled by default.  "
++"If in doubt, I suggest you leave it disabled."
++msgstr ""
++"Habilitar essa característica pode ser um risco de segurança, então ela é desabilitada "
++"por padrão. Em caso de dúvida, eu sugiro que você deixe-a desabilitada."
++
+--- netselect-0.3.ds1.orig/debian/templates
++++ netselect-0.3.ds1/debian/templates
+@@ -0,0 +1,11 @@
++Template: netselect/install-setuid
++Type: boolean
++Default: false
++_Description: Do you want netselect to be installed setuid root?
++ Netselect can be installed with the set-user-id bit set, so that it will
++ run with the permissions of the 'root' user.  Since netselect needs these
++ permissions to work properly, ordinary users cannot run it unless it is
++ installed this way.
++ .
++ Enabling this feature may be a security risk, so it is disabled by
++ default.  If in doubt, I suggest you leave it disabled.
+--- netselect-0.3.ds1.orig/debian/compat
++++ netselect-0.3.ds1/debian/compat
+@@ -0,0 +1 @@
++4
+--- netselect-0.3.ds1.orig/debian/netselect.postinst
++++ netselect-0.3.ds1/debian/netselect.postinst
+@@ -0,0 +1,20 @@
++#!/bin/sh -e
++
++. /usr/share/debconf/confmodule
++db_get netselect/install-setuid
++
++if [ -x /usr/bin/netselect -a "$RET" = "false" ] ; then
++    if [ -x /usr/sbin/dpkg-statoverride ] && \
++        ! /usr/sbin/dpkg-statoverride --list /usr/bin/netselect >/dev/null; then
++        chmod u=rwx,go=rx /usr/bin/netselect
++        chown root:root /usr/bin/netselect
++    fi
++else
++    if [ -x /usr/sbin/dpkg-statoverride ] && \
++        ! /usr/sbin/dpkg-statoverride --list /usr/bin/netselect >/dev/null; then
++        chmod u=rwxs,go=rx /usr/bin/netselect
++        chown root:root /usr/bin/netselect
++    fi
++fi
++
++#DEBHELPER#
+--- netselect-0.3.ds1.orig/debian/netselect.manpages
++++ netselect-0.3.ds1/debian/netselect.manpages
+@@ -0,0 +1 @@
++netselect.1
+--- netselect-0.3.ds1.orig/debian/netselect.postrm
++++ netselect-0.3.ds1/debian/netselect.postrm
+@@ -0,0 +1,2 @@
++#!/bin/sh -e
++#DEBHELPER#
+--- netselect-0.3.ds1.orig/debian/netselect.docs
++++ netselect-0.3.ds1/debian/netselect.docs
+@@ -0,0 +1,2 @@
++README
++HISTORY
+--- netselect-0.3.ds1.orig/debian/netselect-apt.dirs
++++ netselect-0.3.ds1/debian/netselect-apt.dirs
+@@ -0,0 +1,2 @@
++usr/bin
++usr/share/doc/netselect-apt
+--- netselect-0.3.ds1.orig/debian/netselect.config
++++ netselect-0.3.ds1/debian/netselect.config
+@@ -0,0 +1,8 @@
++#! /bin/sh -e
++
++. /usr/share/debconf/confmodule
++
++db_input medium netselect/install-setuid || true
++db_go
++
++exit 0
+--- netselect-0.3.ds1.orig/debian/netselect.dirs
++++ netselect-0.3.ds1/debian/netselect.dirs
+@@ -0,0 +1,2 @@
++usr/bin
++usr/share/doc/netselect
+--- netselect-0.3.ds1.orig/debian/netselect-apt.manpages
++++ netselect-0.3.ds1/debian/netselect-apt.manpages
+@@ -0,0 +1 @@
++netselect-apt.1
+--- netselect-0.3.ds1.orig/debian/netselect.NEWS
++++ netselect-0.3.ds1/debian/netselect.NEWS
+@@ -0,0 +1,6 @@
++netselect (0.3-5) unstable; urgency=low
++                                                                                
++  * netselect-apt has been split from netselect and is now a separate package   
++    named "netselect-apt".                                                      
++                                                                                
++ -- Filippo Giunchedi <filippo@esaurito.net>  Fri, 23 Jan 2004 01:01:26 +0100   
+--- netselect-0.3.ds1.orig/debian/netselect-apt.NEWS
++++ netselect-0.3.ds1/debian/netselect-apt.NEWS
+@@ -0,0 +1,3 @@
++This is a new improved version of netselect-apt, I tried to add some useful
++options while retaining backward compatibily with the old netselect.
++Please report any bug/suggestion/whatever
+--- netselect-0.3.ds1.orig/debian/control
++++ netselect-0.3.ds1/debian/control
+@@ -1,20 +1,26 @@
+ Source: netselect
+ Section: net
+ Priority: optional
+-Maintainer: Avery Pennarun <apenwarr@debian.org>
+-Standards-Version: 2.4.1
++Maintainer: Filippo Giunchedi <filippo@debian.org>
++Standards-Version: 3.6.1
++Build-Depends: debhelper (>= 4.1.16), po-debconf
+ 
+ Package: netselect
+ Architecture: any
+-Depends: ${shlibs:Depends}
+-Conflicts: suidmanager (<< 0.50)
+-Recommends: wget
+-Description: Choose the fastest server automatically.
++Depends: ${shlibs:Depends}, ${misc:Depends} 
++Suggests: netselect-apt
++Description: Choose the fastest server automatically
+  This is netselect, an ultrafast intelligent parallelizing binary-search
+  implementation of "ping."  You give it a (possibly very long) list of
+  servers, and it chooses the fastest/closest one automatically.  It's good
+  for finding the fastest ftp.debian.org mirror, the least laggy IRC server,
+  or the best Squid neighbour.
+- .
+- This version also includes netselect-apt, which creates an apt sources.list
+- file automatically from the huge list of Debian mirrors.
++
++Package: netselect-apt
++Architecture: all
++Depends: wget, netselect (>= 0.3.ds1-1)
++Enhances: apt
++Description: Choose the fastest Debian mirror with netselect
++ netselect-apt will choose the fastest Debian mirror by downloading the full
++ mirror list and uses netselect to find the best one. netselect-apt writes a
++ sources.list(5) file that can be used with apt(8).
+--- netselect-0.3.ds1.orig/debian/changelog
++++ netselect-0.3.ds1/debian/changelog
+@@ -1,3 +1,87 @@
++netselect (0.3.ds1-5) unstable; urgency=low
++
++  * now netselect-apt -f should work as expected (patch by Peter Walser)
++    Closes: #312082
++
++ -- Filippo Giunchedi <filippo@debian.org>  Sun,  5 Jun 2005 16:24:51 +0200
++
++netselect (0.3.ds1-4) unstable; urgency=low
++
++  * minor update to de.po by Jens Nachtigall (Closes: #278266)
++  * updated maintainer field to new d.org address
++  * added pt_BR debconf translation by Tiago Bortoletto Vaz (Closes: #283838)
++
++ -- Filippo Giunchedi <filippo@debian.org>  Fri,  1 Apr 2005 11:11:13 +0200
++
++netselect (0.3.ds1-3) unstable; urgency=low
++
++  * do not guess the distribution in netselect-apt, default to stable and
++    manpage update
++    (Closes: #275223)
++  * accept also >= woody as distribution name (Closes: #275694)
++  * Added debconf czech translation thanks to Jan Outrata (Closes: #276665)
++
++ -- Filippo Giunchedi <filippo@esaurito.net>  Wed, 13 Oct 2004 13:34:32 +0200
++
++netselect (0.3.ds1-2) unstable; urgency=low
++
++  * Added check for empty netselect result to netselect-apt
++    (Closes: #133452, #237163)
++  * Improved netselect-apt with also options for having deb-src included
++    (Closes: #237725)
++  * Added versioned Depends: netselect to netselect-apt to avoid installing
++    netselect-apt with an older version of netselect (Closes: #238230)
++  * Added debconf french translation thanks to Clement Stenac (Closes: #238773)
++  * Added a check to netselect-apt to know if we can run netselect
++    (Closes: #239504)
++  * More informative error message when not root (Closes: #240893)
++  * Added Japanese debconf template thanks to Hideky Yamane (Closes: #270760)
++  * Added German debconf template thanks to Jens Nachtigall (Closes: #273987)
++
++ -- Filippo Giunchedi <filippo@esaurito.net>  Thu, 30 Sep 2004 23:12:13 +0200
++
++netselect (0.3.ds1-1) unstable; urgency=low
++
++  * New maintainer (Closes: #210394)
++  * Split off an upstream tarball for netselect.  Suffixed version with .ds1
++  * netselect-apt.1 and netselect.1 manpages added thanks to Jim Van Zandt and
++    Simon Law (Closes: #147928, #121882, #144973)
++  * documented -vvv and -vvvv in netselect.c, README and manpage updated
++    (Closes: #212044)
++  * Removed debian-ftp-mirrors from README (Closes: #156799)
++  * Documented '-s' in usage()
++  * netselect-apt has been split from netselect and is now a separate package
++    named "netselect-apt".
++  * (po-)Debconfiscated the package
++  * Changed setuid handling to ask a Debconf question
++  * Updated to comply with Policy 3.6.1
++  * Built using debhelper 4
++
++ -- Filippo Giunchedi <filippo@esaurito.net>  Sat, 21 Feb 2004 11:52:26 +0100
++
++netselect (0.3-4) unstable; urgency=low
++
++  * Oops, I wasn't paying attention to the BTS again.  Changed the setuid
++    stuff one more time.  Closes: #111338 (again)
++
++ -- Avery Pennarun <apenwarr@debian.org>  Tue,  6 Nov 2001 21:02:36 -0500
++
++  
++netselect (0.3-3) unstable; urgency=low
++
++  * Don't sudo if we think we're root so we can build with fakeroot;
++    closes: #111338.
++
++ -- Avery Pennarun <apenwarr@debian.org>  Wed,  5 Sep 2001 13:49:45 -0400
++
++  
++netselect (0.3-2) unstable; urgency=low
++
++  * Add a build-depends for debhelper; closes: #110972.
++
++ -- Avery Pennarun <apenwarr@debian.org>  Mon,  3 Sep 2001 15:46:44 -0400
++  
++
+ netselect (0.3-1) unstable; urgency=low
+   
+   * New upstream version with many bug fixes.  closes: #56432, #71836.
+--- netselect-0.3.ds1.orig/Makefile
++++ netselect-0.3.ds1/Makefile
+@@ -1,6 +1,6 @@
+ PREFIX = /usr/local
+ BINDEST = ${PREFIX}/bin
+-MANDEST = ${PREFIX}/man/man8
++MANDEST = ${PREFIX}/man/man1
+ 
+ CC = gcc
+ CFLAGS = -O2 -Wall -I. -g
+@@ -20,23 +20,28 @@
+ 
+ netselect: netselect.o
+ 	${CC} ${LDFLAGS} -o $@ $^ ${LIBS}
++
++install: $(PROG)
++	
+ ifdef OS2
+ 	emxbind -bwq netselect
+ else
+-	-sudo chown root netselect && sudo chmod u+s netselect
++	chown root netselect && chmod u+s netselect
+ endif
+-
+-install: $(PROG)
++	
+ 	-install -d ${BINDEST}
+-	#-install -d ${MANDEST}
++	-install -d ${MANDEST}
+ 	install $(STRIP) -o root -g root -m 4755 \
+ 		netselect${BINSUFFIX} ${BINDEST}
+ 	install -o root -g root -m 0755 netselect-apt ${BINDEST}
+-	#install -o root -g root -m 0644 netselect.8 ${MANDEST}
++	install -o root -g root -m 0644 netselect.1 ${MANDEST}
++	install -o root -g root -m 0644 netselect-apt.1 ${MANDEST}
+ 
++	
+ uninstall:
+ 	$(RM) ${BINDEST}/netselect${BINSUFFIX} ${BINDEST}/netselect-apt
+-	$(RM) ${MANDEST}/netselect.8
++	$(RM) ${MANDEST}/netselect.1
++	$(RM) ${MANDEST}/netselect-apt.1
+ 
+ clean:
+ 	$(RM) netselect netselect${BINSUFFIX} *.o *~ build-stamp core
+--- netselect-0.3.ds1.orig/netselect.c
++++ netselect-0.3.ds1/netselect.c
+@@ -1,6 +1,6 @@
+ /*
+  * Netselect:
+- *      Copyright (c) 1998-2001 by Avery Pennarun <apenwarr@worldvisions.ca>
++ *      Copyright (c) 1998-2001 by Avery Pennarun <apenwarr@nit.ca>
+  *
+  * Traceroute:
+  * Copyright (c) 1990, 1993
+@@ -157,12 +157,17 @@
+     OPacket outpacket;          /* last output (udp) packet */
+     HostData *host, *hosts;
+     int numhosts, delay, must_continue, count;
++    int socket_errno = 0;
++
++    if (geteuid () != 0)
++        fprintf (stderr, "%s: root privileges required\n", argv[0]);
+ 
+     if ((rcvsock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0
+      || (sndsock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW )) < 0)
+     {
+-	perror("netselect: socket");
+-	return 5;
++	/* Capture errno so that command-line options can be parsed.
++	   We delay reporting an error until this has happened. */
++	socket_errno = errno;
+     }
+ 
+     /* drop root privileges as soon as possible! */
+@@ -218,7 +223,15 @@
+ 	usage();
+ 	return 1;
+     }
+-    
++
++    /* Was there an error acquiring a socket? */
++    if (socket_errno)
++    {
++	errno = socket_errno;
++	perror("netselect: socket");
++	return 5;
++    }
++
+     memset(&outpacket, 0, sizeof(OPacket));
+     outpacket.ip.ip_tos = 0;
+     outpacket.ip.ip_v = IPVERSION;
+@@ -873,8 +886,8 @@
+ static void usage(void)
+ {
+     fprintf(stderr,
+-	    "Usage: netselect [-v] [-vv] [-t min_tries] [-m max_ttl]"
+-	    " host [host...]\n");
++	    "Usage: netselect [-v|-vv|-vvv] [-m max_ttl] [-s servers] "
++	    "[-t min_tries] host ...\n");
+ }
+ 
+ 
+--- netselect-0.3.ds1.orig/README
++++ netselect-0.3.ds1/README
+@@ -36,10 +36,8 @@
+ nothing got through at all.  That indicates that either the host doesn't
+ exist, or it is down.
+ 
+-For a bigger example, I've included the file debian-ftp-mirrors, which is a
+-partially up-to-date list of Debian Linux FTP site mirrors.  Try this:
+-
+-	netselect -vvv $(cat debian-ftp-mirrors)
++For a bigger example, try netselect-apt to build your own sources.list for apt
++with the (possibily) fastest debian mirror.
+ 
+ 
+ But Why?
+@@ -53,7 +51,7 @@
+ its scoring mechanism.  If you want, however, you can still pass the raw
+ results and score the servers as you like.  Try this, for example:
+ 
+-	netselect -vv -s 0 $(cat debian-ftp-mirrors)
++	netselect -vv -s 0 $(cat <your_list_of_sites>)
+ 	
+ The "-s 0" option disables printing of scores at the bottom of the list, and
+ "-vv" enables printing of the statistics.
+@@ -103,6 +101,9 @@
+ 	-vvv	-- very very verbose mode.  Everything -vv prints, plus
+ 		   print every packet received as it happens.  Good for
+ 		   debugging or trying to figure out how it works.
++	
++	-vvvv   -- very very very verbose mode. Everything -vvv prints,
++		   plus a trace of all packets sent.
+ 		   
+ 	-m #	-- maximum ttl.  Don't accept hosts with more hops than
+ 		   this.
+@@ -133,4 +134,4 @@
+ This program is highly experimental.  Please let me know what you think.
+ 
+ 	- Avery Pennarun
+-	  <apenwarr@worldvisions.ca>
++	  <apenwarr@nit.ca>
+--- netselect-0.3.ds1.orig/netselect.1
++++ netselect-0.3.ds1/netselect.1
+@@ -0,0 +1,123 @@
++.TH NETSELECT 1 "March 14, 2004" "DEBIAN" \" -*- nroff -*-
++.\" Please adjust this date whenever revising the manpage.
++
++.SH NAME
++netselect \- choose the fastest server automatically
++
++.SH SYNOPSIS
++
++.B netselect
++.RB [ \|\-v\| | \|\-vv\| | \|\-vvv\| | \|\-vvvv\| ]
++.\".RB [ \|\-vv\| ]
++.RB [ \|\-m
++.IR HOPS ]
++.RB [ \|\-s
++.IR SERVERS\| ]
++.RB [ \|\-t
++.IR PACKETS\| ]
++.IR host \ ...
++
++.SH DESCRIPTION
++
++.B netselect
++determines several facts about all of the hosts given on the command
++line, much faster than you would if you manually tried to use
++.B ping
++and
++.BR traceroute .
++
++For each
++.IR host ,
++.B netselect
++figures out the approximate
++.B ping
++time (though not as accurately as
++.B ping
++does), the number of network "hops" to
++reach the target, and the percentage of
++.B ping
++requests that got through successfully. Then
++.B netselect
++calculates the "score" of each operational
++.I host 
++based on these values.  A lower score is better, in the end it prints
++one line showing the server with the best score.
++
++.SH EXAMPLES
++
++.nf
++\fB#\fR netselect \-vv ftp.fceia.unr.edu.ar ftp.kulnet.kuleuven.ac.be \\
++		 ftp.cdrom.com ftp.debian.org ftp.de.debian.org
++.fi
++
++This is the output:
++
++.nf
++ftp.fceia.unr.edu.ar         2792 ms  23 hops  100% ok ( 1/ 1) [ 9213]
++ftp.kulnet.kuleuven.ac.be    9999 ms  30 hops    0% ok
++ftp.cdrom.com                  94 ms   8 hops  100% ok (10/10) [  169]
++ftp.debian.org                 46 ms  15 hops  100% ok (10/10) [  115]
++ftp.de.debian.org            9999 ms  30 hops    0% ok
++  115 ftp.debian.org
++.fi
++
++The value in brackets is the "score" of each operational host based on these
++values.  A lower score is better.  The last line shows the server with the
++best score.  If we had not used '\-vv' on the command line, only this last
++line would have been printed.
++
++Note that for ftp.kulnet.kuleuven.ac.be and ftp.de.debian.org in this case,
++nothing got through at all.  That indicates that either the host doesn't
++exist, or it is down.
++
++.SH OPTIONS
++.TP
++.B \-v
++Verbose mode.  Displays nameserver resolution messages to stderr.  You
++probably want this so that you don't get bored waiting for a hundred
++name resolutions to finish.
++
++.TP
++.B \-vv
++Very verbose mode.  Displays nameserver resolution and statistics (not
++just scores) to STDERR and STDOUT.
++
++.TP
++.B \-vvv
++Very very verbose mode.  Everything \-vv prints, plus it print every
++packet received as it happens.  Good for debugging or trying to figure
++out how it works.
++
++.TP
++.B \-vvvv
++Very very very verbose mode.  Everything \-vvv prints, plus a trace of
++all packets sent.
++
++.TP
++.BI \-m\  HOPS
++Maximum TTL (time to live).  Don't accept hosts that are further than
++.I HOPS
++away.
++
++.TP
++.BI \-s\  SERVERS
++Print this many "top-scoring"
++.I SERVERS
++at the end of the list.  If
++.I SERVERS
++is 0, then this disables printing of high scores.
++
++.TP
++.BI \-t\  PACKETS
++Make sure at least 50% of the hosts get tested with this many
++.IR PACKETS .
++The more packets you use, the more accurate are the results... and the
++longer it takes to run.  The default is 10, which is usually okay.
++
++.SH SEE ALSO
++.BR ping (8),
++.BR traceroute (8),
++.BR netselect-apt (1).
++
++.SH AUTHOR
++Avery Pennarun <apenwarr@nit.ca>
+--- netselect-0.3.ds1.orig/netselect-apt.1
++++ netselect-0.3.ds1/netselect-apt.1
+@@ -0,0 +1,85 @@
++.TH NETSELECT-APT 1 "October 9, 2004" "DEBIAN" \" -*- nroff -*-
++.\" Please adjust this date whenever revising the manpage.
++
++.SH NAME
++netselect-apt \- create sources.list for the fastest Debian mirrors
++
++.SH SYNOPSIS
++.B netselect-apt
++.RI [ OPTIONS ]
++.\" copied verbatim from netselect-apt
++.RI [ \|stable | testing | unstable | experimental | woody | sarge | etch | sid ]
++
++.SH DESCRIPTION
++
++.B netselect-apt
++automatically creates a sources.list file for using with
++.BR apt
++for the specified distribution by downloading the list of Debian
++mirrors using
++.B wget
++and choosing the fastest servers (both US and non-US) using
++.BR netselect .
++The output file is written to
++.IR OUTFILE .
++
++If there is a file called 
++.I mirrors_full
++in the current directory which lists the Debian mirrors,
++.B netselect-apt
++uses that rather than downloading another copy.
++
++.SH OPTIONS
++.TP
++.IR stable | testing | unstable | experimental | woody | sarge | etch | sid
++Specify which distribution of Debian to use.  By default
++.I stable
++is used.
++
++.TP
++.B \-s, \-\-sources
++While generating
++.I OUTFILE
++include also deb-src lines to use with ``apt-get source'' to obtain
++Debian source packages.
++
++.TP
++.BI "\-i, \-\-infile" " INFILE"
++Use
++.I INFILE
++instead of mirrors_full for reading mirror list. The file must be in
++the same format as mirrors_full.
++
++.TP
++.BI "\-o, \-\-outfile" " OUTFILE"
++Use
++.I OUTFILE
++instead of sources.list.
++
++.TP
++.B \-n, \-\-nonfree
++Include also non-free section while generating
++.IR OUTFILE .
++
++.TP
++.B \-f, \-\-ftp
++Use FTP mirrors instead of HTTP and generate
++.I OUTFILE
++accordingly.
++
++.SH ENVIROMENT
++.TP
++.B WANT_SOURCES
++setting this to 1 is equivalent to --sources
++.TP
++.B WANT_NONFREE
++setting this to 1 is equivalent to --nonfree
++
++.SH SEE ALSO
++.BR netselect (1),
++.BR wget (1),
++.BR apt (8),
++.IR sources.list (5).
++
++.SH AUTHOR
++Avery Pennarun <apenwarr@nit.ca>
+--- netselect-0.3.ds1.orig/netselect-apt
++++ netselect-0.3.ds1/netselect-apt
+@@ -1,10 +1,11 @@
+-#!/bin/bash
++#!/bin/bash 
+ #
+ # A script to create an apt sources.list file automatically by downloading
+ # the list of Debian mirrors and choosing the fastest main and non-us server
+ # using netselect.
+ #
+ # Author: Avery Pennarun <apenwarr@debian.org>
++# Enhancements: Filippo Giunchedi <filippo@esaurito.net>
+ #
+ # License: public domain.  Please feel free to improve this script.  It
+ # doesn't really belong in the netselect package, particularly since the
+@@ -13,18 +14,26 @@
+ # please do.  Then tell me, so I can remove it from the netselect package.
+ #
+ # TO DO:
+-#   - parse command line options for output file, input files, etc.
+ #   - have some way to pass options (especially -t) to netselect.
+ #   - test the generated files automatically.  Some mirrors in the list
+ #       are broken.  We should at least verify that the Packages and Sources
+ #       files exist and aren't ancient.
+ #   - maybe generate redundant entries, in case one server is missing files?
+-#
+-#
+ 
+-URL="http://www.debian.org/mirror/mirrors_full"
+-DISTRO="$1"
++# our defaults
++# RATIONALE for WANT_SOURCES and WANT_NONFREE enviromental variables:
++# both variables can be system wide and can be useful to not always specify them
++# on the commandline
++want_sources=${WANT_SOURCES:-0}
++infile="mirrors_full"
++outfile="sources.list"
++distro="stable"
++want_nonfree=${WANT_NONFREE:-0}
++protocol="HTTP"
++url="http://www.debian.org/mirror/mirrors_full"
+ 
++
++# misc functions
+ log()
+ {
+ 	echo "$@" >&2
+@@ -33,73 +42,144 @@
+ run_netselect()
+ {
+ 	SEARCH="$1"
+-
+-	netselect -v -s 1 $(cat mirrors_full \
++    PROTO="$2"
++    netselect -v -s 1 $(cat mirrors_full \
+ 	    | perl -n -e '
+-	    	if (m{^'"$SEARCH"':.*<a href="(http://.*?)">}) {
++	    	if (m{^'"$SEARCH"':.*<a href="('"$PROTO"'://.*?)">}i) {
+ 			print("$1\n");
+ 		}') \
+-	    | awk '{print $2}'
++ 	    | awk '{print $2}'
+ }
+ 
+-if [ -z "$1" ]; then
+-	log "You didn't provide a distribution name (usually 'stable', "
+-	log "'testing', or 'unstable') on the command line.  We'll use "
+-	log "'stable' by default."
+-	log
+-	DISTRO=stable
++netselect_error()
++{
++	log "netselect was unable to find a mirror, this probably means that"
++	log "you are behind a firewall and it is blocking traceroute."
++}
++
++usage()
++{
++	log "Usage: netselect-apt [OPTIONS] [ stable | testing | unstable | experimental ]"
++	log "Options:"
++	log "   -s, --sources          Include deb-src lines in generated file (default: no)"
++	log "   -i, --infile INFILE    Use INFILE as the input file (default: mirrors_full)"
++	log "   -o, --outfile OUTFILE  Use OUTFILE as the output file"
++	log "                            (default: sources.list)"
++	log "   -n, --nonfree          Use also non-free packages in OUTFILE (default: no)"
++	log "   -f, --ftp              Use FTP as the protocol for OUTFILE (default: HTTP)"
++}
++
++
++# can we use netselect?
++# ok, we should also check ownership of netselect but assuming it's root
++if [ ! -u /usr/bin/netselect -a "$UID" -gt 0 ]; then
++	log "netselect has not the set-user-id bit set and you are not root"
++	log "please run netselect-apt as root or set-user-id bit on /usr/bin/netselect"
++	exit 2
+ fi
+ 
+-if [ ! -f mirrors_full -a ! -e /usr/bin/wget ]; then
++# commandline parsing
++temp=$(getopt -o si:o:nfh -l sources,infile:,outfile:,nonfree,ftp,help -n 'netselect-apt' -- "$@")
++if [ $? != 0 ]; then echo "Terminating..." >&2; exit 2; fi
++eval set -- "$temp"
++while true; do
++	case "$1" in
++		-s|--sources) want_sources=1; shift ;;
++		-i|--infile) infile="$2"; shift 2 ;;
++		-o|--outfile) outfile="$2"; shift 2 ;;
++		-n|--nonfree) want_nonfree=1; shift ;;
++		-f|--ftp) protocol="FTP"; shift ;;
++		-h|--help) usage; exit 0;;
++		--) shift; break;;
++		*) echo "Internal Error!"; echo "args: $@"; exit 1;;
++	esac
++done
++
++# distro is a non-option for backward compatibility
++case "$1" in
++	stable|testing|unstable|experimental|woody|sarge|etch|sid) distro="$1" ;;
++	'') ;;
++	*) log "Invalid distribution: $1"; exit 1 ;;
++esac
++
++
++# netselect starting
++log "Using distribution $distro."
++
++if [ ! -f "$infile" -a ! -x /usr/bin/wget ]; then
+ 	log "Sorry, this script requires the 'wget' package in order to run."
+ 	log "You can also download the mirrors list yourself and leave it"
+ 	log "in the current directory:"
+-	log "        $URL"
+-	exit 1
++	log "        $url"
++	exit 2
+ fi
+ 
+-if [ ! -f mirrors_full ]; then
++if [ ! -f "$infile" ]; then
+ 	log "Retrieving the list of mirrors from www.debian.org..."
+ 	log
+ 
+-	if ! wget "$URL"; then
++	if ! /usr/bin/wget -O "$infile" "$url"; then
+ 		log "$0: wget failed.  Please try to correct the problem"
+ 		log "by reading the wget messages printed above."
+ 		exit 2
+ 	fi
+ else
+-	log "There is a already a mirrors_full file in the current"
++	log "There is a already a $infile file in the current"
+ 	log "directory.  I'll use that, rather than downloading it again."
+ 	log
+ fi
+ 
+ log "Choosing a main Debian mirror using netselect."
+-MAIN=$(run_netselect "Packages over HTTP")
+-log "The fastest server seems to be:"
+-log "        $MAIN"
+-log
++main=$(run_netselect "Packages over $protocol" $protocol)
++if [ -z "$main" ]; then
++	netselect_error
++	exit 2
++else
++	log "The fastest server seems to be:"
++	log "        $main"
++	log
++fi
+ 
+ log "Choosing a non-US Debian mirror using netselect."
+-NON_US=$(run_netselect "Non-US packages over HTTP")
+-log "The fastest non-US server seems to be:"
+-log "        $NON_US"
+-log
++non_us=$(run_netselect "Non-US packages over $protocol" $protocol)
++if [ -z "$non_us" ]; then
++	netselect_error
++	exit 2
++else
++	log "The fastest non-US server seems to be:"
++	log "        $non_us"
++	log
++fi
++
++log "Writing $outfile."
+ 
+-log "Writing the sources.list in the current directory."
++if [ -f "$outfile" ]; then
++	log "$outfile exists, moving to $outfile.orig"
++	mv $outfile $outfile.orig
++fi
+ 
+-rm -f sources.list
++sections="main contrib"
++if [ "$want_nonfree" -eq 1 ]; then sections="$sections non-free"; fi
+ 
+ (
+-	echo "# the main Debian packages.  Uncomment the deb-src line if you"
+-	echo "# want 'apt-get source' to work with most packages."
+-	echo "deb $MAIN $DISTRO main contrib non-free"
+-	echo "# deb-src $MAIN $DISTRO main contrib non-free"
++	echo "# the main Debian packages." 
++	echo "deb $main $distro $sections"
++	echo "# Uncomment the deb-src line if you want 'apt-get source'"
++	echo "# to work with most packages."
++	if [ "$want_sources" -eq 0 ]; then
++		echo -n "# "
++	fi
++	echo "deb-src $main $distro $sections" 
+ 	
+ 	echo
+-	echo "# the non-US Debian packages.  Uncomment the deb-src line if you"
+-	echo "# want 'apt-get source' to work with non-US packages."
+-	echo "deb $NON_US $DISTRO/non-US main contrib non-free"
+-	echo "# deb-src $NON_US $DISTRO/non-US main contrib non-free"
+-) >sources.list
++	echo "# the non-US Debian packages."
++	echo "deb $non_us $distro/non-US $sections"
++	echo "# Uncomment the deb-src line if you want 'apt-get source'"
++	echo "# to work with most non-US packages"
++	if [ "$want_sources" -eq 0 ]; then
++		echo -n "# "
++	fi
++	echo "deb-src $non_us $distro/non-US $sections"
++) > $outfile
+ 
+ echo "Done."
