@@ -1,0 +1,45 @@
+--- Makefile.old	2005-12-15 22:47:42.000000000 +0100
++++ Makefile	2005-12-15 23:11:50.000000000 +0100
+@@ -1,10 +1,8 @@
+-PREFIX = /usr/local
+-BINDEST = ${PREFIX}/bin
+-MANDEST = ${PREFIX}/man/man1
+-
+-CC = gcc
+-CFLAGS = -O2 -Wall -I. -g
+-LDFLAGS = -g
++PREFIX = ${DESTDIR}
++BINDEST = ${PREFIX}/usr/bin
++MANDEST = ${PREFIX}/usr/share/man/man1
++
++override CFLAGS += -Wall -I.
+ LIBS = 
+ 
+ ifdef OS2
+@@ -25,23 +23,16 @@
+ 	
+ ifdef OS2
+ 	emxbind -bwq netselect
+-else
+-	chown root netselect && chmod u+s netselect
+ endif
+ 	
+ 	-install -d ${BINDEST}
+ 	-install -d ${MANDEST}
+-	install $(STRIP) -o root -g root -m 4755 \
+-		netselect${BINSUFFIX} ${BINDEST}
+-	install -o root -g root -m 0755 netselect-apt ${BINDEST}
+-	install -o root -g root -m 0644 netselect.1 ${MANDEST}
+-	install -o root -g root -m 0644 netselect-apt.1 ${MANDEST}
+-
++	install $(STRIP) netselect${BINSUFFIX} ${BINDEST}
++	install netselect.1 ${MANDEST}
+ 	
+ uninstall:
+-	$(RM) ${BINDEST}/netselect${BINSUFFIX} ${BINDEST}/netselect-apt
++	$(RM) ${BINDEST}/netselect${BINSUFFIX}
+ 	$(RM) ${MANDEST}/netselect.1
+-	$(RM) ${MANDEST}/netselect-apt.1
+ 
+ clean:
+ 	$(RM) netselect netselect${BINSUFFIX} *.o *~ build-stamp core
