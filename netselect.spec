@@ -5,11 +5,11 @@ Version:	0.3
 Release:	1
 License:	BSD
 Group:		Networking/Utilities
-Source0:	http://people.nit.ca/~apenwarr/netselect/%{name}-%{version}.tar.gz
+Source0:	http://alumnit.ca/~apenwarr/netselect/%{name}-%{version}.tar.gz
 # Source0-md5:	3a3714946db2458e5db3d55373057ef2
 Patch0:		%{name}-debian.patch
 Patch1:		%{name}-Makefile.patch
-URL:		http://people.nit.ca/~apenwarr/netselect/
+URL:		http://alumnit.ca/~apenwarr/netselect/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
