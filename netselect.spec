@@ -1,5 +1,5 @@
 Summary:	Choose the fastest server automatically
-Summary(pl):	Automatyczny wybór najszybszego serwera
+Summary(pl.UTF-8):   Automatyczny wybÃ³r najszybszego serwera
 Name:		netselect
 Version:	0.3
 Release:	1
@@ -19,12 +19,12 @@ long) list of servers, and it chooses the fastest/closest one
 automatically. It's good for finding the fastest ftp mirror, the least
 laggy IRC server, or the best Squid neighbour.
 
-%description -l pl
-netselect to bardzo szybka, inteligentna, równoleg³a implementacja
-polecenia "ping". Podaje mu siê (prawdopodobnie bardzo d³ug±) listê
-serwerów, a on wybiera z nich automatycznie najszybszy/najbli¿szy.
+%description -l pl.UTF-8
+netselect to bardzo szybka, inteligentna, rÃ³wnolegÅ‚a implementacja
+polecenia "ping". Podaje mu siÄ™ (prawdopodobnie bardzo dÅ‚ugÄ…) listÄ™
+serwerÃ³w, a on wybiera z nich automatycznie najszybszy/najbliÅ¼szy.
 Jest to przydatne do znajdowania najszybszego serwera ftp, najmniej
-laguj±cego serwera IRC albo najlepszego s±siedzkiego serwera proxy.
+lagujÄ…cego serwera IRC albo najlepszego sÄ…siedzkiego serwera proxy.
 
 %prep
 %setup -q -n %{name}
