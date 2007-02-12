@@ -1,5 +1,5 @@
 Summary:	Choose the fastest server automatically
-Summary(pl.UTF-8):   Automatyczny wybór najszybszego serwera
+Summary(pl.UTF-8):	Automatyczny wybór najszybszego serwera
 Name:		netselect
 Version:	0.3
 Release:	1
